@@ -1,0 +1,123 @@
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+
+import { AppLanguage } from '@/src/language-context';
+import { Celebration } from '@/src/celebrations-context';
+
+const REMINDER_HOUR = 9;
+const CHANNEL_ID = 'sanly-birthdays';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+async function ensureAndroidChannel() {
+  if (Platform.OS !== 'android') return;
+  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: 'Birthday reminders',
+    importance: Notifications.AndroidImportance.DEFAULT,
+    vibrationPattern: [0, 250, 150, 250],
+  });
+}
+
+export async function ensureNotificationPermission() {
+  await ensureAndroidChannel();
+  const existing = await Notifications.getPermissionsAsync();
+  if (existing.granted) return true;
+  const requested = await Notifications.requestPermissionsAsync();
+  return requested.granted;
+}
+
+function birthdayContent(celebration: Celebration, language: AppLanguage | null) {
+  if (language === 'Marathi') {
+    return {
+      title: `आज ${celebration.name} चा वाढदिवस आहे 🎂`,
+      body: 'SANLY उघडा आणि मनापासून शुभेच्छा पाठवा 💗',
+    };
+  }
+  return {
+    title: `It’s ${celebration.name}’s birthday 🎂`,
+    body: 'Open SANLY and make their day with a thoughtful wish 💗',
+  };
+}
+
+async function scheduleYearlyBirthday(celebration: Celebration, language: AppLanguage | null) {
+  const [day, month] = celebration.date.split('/').map(Number);
+  const content = birthdayContent(celebration, language);
+
+  return Notifications.scheduleNotificationAsync({
+    content: {
+      ...content,
+      data: { sanly: true, celebrationId: celebration.id, kind: 'birthday' },
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.YEARLY,
+      month: month - 1,
+      day,
+      hour: REMINDER_HOUR,
+      minute: 0,
+      channelId: Platform.OS === 'android' ? CHANNEL_ID : undefined,
+    },
+  });
+}
+
+async function scheduleTodayCatchUp(celebration: Celebration, language: AppLanguage | null) {
+  const now = new Date();
+  const today = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}`;
+  if (celebration.date !== today || now.getHours() < REMINDER_HOUR) return;
+
+  const content = birthdayContent(celebration, language);
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      ...content,
+      data: { sanly: true, celebrationId: celebration.id, kind: 'birthday-today' },
+      sound: 'default',
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: 3,
+      channelId: Platform.OS === 'android' ? CHANNEL_ID : undefined,
+    },
+  });
+}
+
+export async function scheduleBirthdayReminder(celebration: Celebration, language: AppLanguage | null) {
+  if (celebration.occasionType !== 'Birthday') return false;
+  const allowed = await ensureNotificationPermission();
+  if (!allowed) return false;
+  await scheduleYearlyBirthday(celebration, language);
+  await scheduleTodayCatchUp(celebration, language);
+  return true;
+}
+
+export async function syncBirthdayReminders(celebrations: Celebration[], language: AppLanguage | null) {
+  const allowed = await ensureNotificationPermission();
+  if (!allowed) return false;
+
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  await Promise.all(
+    scheduled
+      .filter((item) => item.content.data?.sanly === true)
+      .map((item) => Notifications.cancelScheduledNotificationAsync(item.identifier)),
+  );
+
+  const birthdays = celebrations.filter((item) => item.occasionType === 'Birthday');
+  for (const birthday of birthdays) {
+    await scheduleYearlyBirthday(birthday, language);
+    await scheduleTodayCatchUp(birthday, language);
+  }
+  return true;
+}
+
+export async function birthdayRemindersEnabled() {
+  const permission = await Notifications.getPermissionsAsync();
+  return permission.granted;
+}
+
+export { Notifications };
