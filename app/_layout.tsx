@@ -5,50 +5,8 @@ import { Pressable } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { CelebrationProvider } from '@/src/celebrations-context';
 import { LanguageProvider, useLanguage } from '@/src/language-context';
-
-const BackButton = ({ toHome = false }: { toHome?: boolean }) => (
-  <Pressable onPress={() => { if (toHome) return router.replace('/'); if (router.canGoBack()) router.back(); else router.replace('/'); }} hitSlop={12} style={{ paddingVertical: 6, paddingRight: 12 }}>
-    <Ionicons name="chevron-back" size={28} color="#5F258F" />
-  </Pressable>
-);
-
-function Navigation() {
-  const { language } = useLanguage();
-  const marathi = language === 'Marathi';
-
-  useEffect(() => {
-    const openFromResponse = (response: ExpoNotifications.NotificationResponse | null) => {
-      const id = response?.notification.request.content.data?.celebrationId;
-      if (typeof id === 'string' && id) router.push(`/wish/${id}`);
-    };
-
-    ExpoNotifications.getLastNotificationResponseAsync().then(openFromResponse).catch(() => undefined);
-    const subscription = ExpoNotifications.addNotificationResponseReceivedListener(openFromResponse);
-    return () => subscription.remove();
-  }, []);
-
-  return (
-    <Stack screenOptions={{ headerShadowVisible: false, headerTintColor: '#5F258F', headerTitleStyle: { color: '#35143F', fontWeight: '800' }, contentStyle: { backgroundColor: '#FFF9F5' } }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="language" options={{ headerShown: false, presentation: 'modal' }} />
-      <Stack.Screen name="add-person" options={{ title: marathi ? 'खास व्यक्ती जोडा' : 'Add someone special', presentation: 'modal' }} />
-      <Stack.Screen name="edit-person/[id]" options={{ title: marathi ? 'तपशील बदला' : 'Edit celebration' }} />
-      <Stack.Screen name="wish/[id]" options={{ title: marathi ? 'आजचा दिवस खास करा' : 'Make their day', headerLeft: () => <BackButton toHome /> }} />
-      <Stack.Screen name="custom-wish/[id]" options={{ title: marathi ? 'तुमची शुभेच्छा लिहा' : 'Write a wish', headerLeft: () => <BackButton /> }} />
-    </Stack>
-  );
-}
-
-export default function RootLayout() {
-  return (
-    <LanguageProvider>
-      <CelebrationProvider>
-        <Navigation />
-        <StatusBar style="dark" />
-      </CelebrationProvider>
-    </LanguageProvider>
-  );
-}
+const BackButton=({toHome=false}:{toHome?:boolean})=><Pressable onPress={()=>{if(toHome)return router.replace('/');if(router.canGoBack())router.back();else router.replace('/');}} hitSlop={12} style={{paddingVertical:6,paddingRight:12}}><Ionicons name="chevron-back" size={28} color="#5F258F"/></Pressable>;
+function Navigation(){const{language}=useLanguage();const mr=language==='Marathi';const hi=language==='Hindi';useEffect(()=>{const openFromResponse=(response:ExpoNotifications.NotificationResponse|null)=>{const id=response?.notification.request.content.data?.celebrationId;if(typeof id==='string'&&id)router.push(`/wish/${id}`);};ExpoNotifications.getLastNotificationResponseAsync().then(openFromResponse).catch(()=>undefined);const subscription=ExpoNotifications.addNotificationResponseReceivedListener(openFromResponse);return()=>subscription.remove();},[]);const titles=mr?{add:'खास व्यक्ती जोडा',edit:'तपशील बदला',wish:'आजचा दिवस खास करा',custom:'तुमची शुभेच्छा लिहा'}:hi?{add:'किसी खास व्यक्ति को जोड़ें',edit:'जानकारी बदलें',wish:'आज का दिन खास बनाएँ',custom:'अपनी शुभकामना लिखें'}:{add:'Add someone special',edit:'Edit celebration',wish:'Make their day',custom:'Write a wish'};return <Stack screenOptions={{headerShadowVisible:false,headerTintColor:'#5F258F',headerTitleStyle:{color:'#35143F',fontWeight:'800'},contentStyle:{backgroundColor:'#FFF9F5'}}}><Stack.Screen name="(tabs)" options={{headerShown:false}}/><Stack.Screen name="language" options={{headerShown:false,presentation:'modal'}}/><Stack.Screen name="add-person" options={{title:titles.add,presentation:'modal'}}/><Stack.Screen name="edit-person/[id]" options={{title:titles.edit}}/><Stack.Screen name="wish/[id]" options={{title:titles.wish,headerLeft:()=><BackButton toHome/>}}/><Stack.Screen name="custom-wish/[id]" options={{title:titles.custom,headerLeft:()=><BackButton/>}}/></Stack>;}
+export default function RootLayout(){return <LanguageProvider><CelebrationProvider><Navigation/><StatusBar style="dark"/></CelebrationProvider></LanguageProvider>;}
