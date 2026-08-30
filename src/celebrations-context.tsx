@@ -18,6 +18,8 @@ type CelebrationContextValue = {
   celebrations: Celebration[];
   hydrated: boolean;
   addCelebration: (celebration: Omit<Celebration, 'id'>) => Celebration;
+  updateCelebration: (id: string, celebration: Omit<Celebration, 'id'>) => Celebration | null;
+  deleteCelebration: (id: string) => void;
 };
 
 const STORAGE_KEY = '@sanly/celebrations-v1';
@@ -42,9 +44,7 @@ export function CelebrationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(celebrations)).catch((error) =>
-      console.warn('SANLY could not save celebrations', error),
-    );
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(celebrations)).catch((error) => console.warn('SANLY could not save celebrations', error));
   }, [celebrations, hydrated]);
 
   const value = useMemo<CelebrationContextValue>(() => ({
@@ -55,6 +55,16 @@ export function CelebrationProvider({ children }: { children: ReactNode }) {
       setCelebrations((current) => [...current, celebration]);
       return celebration;
     },
+    updateCelebration: (id, input) => {
+      let updated: Celebration | null = null;
+      setCelebrations((current) => current.map((item) => {
+        if (item.id !== id) return item;
+        updated = { ...item, ...input };
+        return updated;
+      }));
+      return updated;
+    },
+    deleteCelebration: (id) => setCelebrations((current) => current.filter((item) => item.id !== id)),
   }), [celebrations, hydrated]);
 
   return <CelebrationContext.Provider value={value}>{children}</CelebrationContext.Provider>;
