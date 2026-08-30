@@ -35,6 +35,7 @@ function Navigation() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="language" options={{ headerShown: false, presentation: 'modal' }} />
       <Stack.Screen name="add-person" options={{ title: marathi ? 'खास व्यक्ती जोडा' : 'Add someone special', presentation: 'modal' }} />
+      <Stack.Screen name="edit-person/[id]" options={{ title: marathi ? 'तपशील बदला' : 'Edit celebration' }} />
       <Stack.Screen name="wish/[id]" options={{ title: marathi ? 'आजचा दिवस खास करा' : 'Make their day', headerLeft: () => <BackButton toHome /> }} />
       <Stack.Screen name="custom-wish/[id]" options={{ title: marathi ? 'तुमची शुभेच्छा लिहा' : 'Write a wish', headerLeft: () => <BackButton /> }} />
     </Stack>
