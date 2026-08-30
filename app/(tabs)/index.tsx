@@ -1,98 +1,74 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.brand}>SANLY</Text>
+            <Text style={styles.tagline}>Don’t forget to wish your loved ones.</Text>
+          </View>
+          <Pressable style={styles.avatar} accessibilityLabel="Open profile">
+            <Text style={styles.avatarText}>स</Text>
+          </Pressable>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.hero}>
+          <Text style={styles.eyebrow}>आज • TODAY</Text>
+          <Text style={styles.heroTitle}>Make someone’s day 🎉</Text>
+          <Text style={styles.heroBody}>Your celebrations will appear here, right when they matter.</Text>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Coming up</Text>
+          <Text style={styles.sectionHint}>पुढील सण</Text>
+        </View>
+
+        <View style={styles.emptyCard}>
+          <View style={styles.giftCircle}>
+            <Text style={styles.gift}>🎁</Text>
+          </View>
+          <Text style={styles.emptyTitle}>Your celebration circle starts here</Text>
+          <Text style={styles.emptyBody}>
+            Add someone you care about. SANLY will remember the date so you can remember the person.
+          </Text>
+          <Pressable style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
+            <Ionicons name="add" size={22} color="#FFFFFF" />
+            <Text style={styles.primaryButtonText}>Add someone</Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.marathiNote}>आपल्या माणसांना शुभेच्छा द्यायला विसरू नका. ❤️</Text>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+  safeArea: { flex: 1, backgroundColor: '#FFF9F4' },
+  container: { paddingHorizontal: 22, paddingTop: 16, paddingBottom: 36 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 },
+  brand: { fontSize: 25, fontWeight: '900', letterSpacing: 2.8, color: '#492C2A' },
+  tagline: { marginTop: 5, fontSize: 13, color: '#876D68' },
+  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#F6E4D7', alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 19, fontWeight: '700', color: '#B85C45' },
+  hero: { backgroundColor: '#FCE9DE', borderRadius: 28, padding: 24, minHeight: 184, justifyContent: 'center' },
+  eyebrow: { fontSize: 12, fontWeight: '800', letterSpacing: 1.3, color: '#B85C45', marginBottom: 10 },
+  heroTitle: { fontSize: 30, lineHeight: 36, fontWeight: '800', color: '#492C2A', maxWidth: 280 },
+  heroBody: { marginTop: 12, fontSize: 15, lineHeight: 22, color: '#755D59', maxWidth: 300 },
+  sectionHeader: { marginTop: 30, marginBottom: 13, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  sectionTitle: { fontSize: 20, fontWeight: '800', color: '#492C2A' },
+  sectionHint: { fontSize: 13, color: '#A28781' },
+  emptyCard: { backgroundColor: '#FFFFFF', borderRadius: 28, paddingHorizontal: 24, paddingVertical: 28, alignItems: 'center', shadowColor: '#573B35', shadowOpacity: 0.06, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 2 },
+  giftCircle: { width: 68, height: 68, borderRadius: 34, backgroundColor: '#FFF2E9', alignItems: 'center', justifyContent: 'center', marginBottom: 17 },
+  gift: { fontSize: 31 },
+  emptyTitle: { fontSize: 20, lineHeight: 26, fontWeight: '800', color: '#492C2A', textAlign: 'center' },
+  emptyBody: { marginTop: 9, fontSize: 14, lineHeight: 21, color: '#876D68', textAlign: 'center', maxWidth: 300 },
+  primaryButton: { marginTop: 22, minHeight: 54, width: '100%', borderRadius: 18, backgroundColor: '#C75D43', flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center' },
+  primaryButtonText: { fontSize: 16, fontWeight: '800', color: '#FFFFFF' },
+  pressed: { opacity: 0.82, transform: [{ scale: 0.99 }] },
+  marathiNote: { marginTop: 24, textAlign: 'center', fontSize: 13, lineHeight: 20, color: '#A28781' },
 });
