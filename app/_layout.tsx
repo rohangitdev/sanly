@@ -1,24 +1,23 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { CelebrationProvider } from '@/src/celebrations-context';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+    <CelebrationProvider>
+      <Stack
+        screenOptions={{
+          headerShadowVisible: false,
+          headerTintColor: '#492C2A',
+          contentStyle: { backgroundColor: '#FFF9F4' },
+        }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen name="add-person" options={{ title: 'Add someone', presentation: 'modal' }} />
+        <Stack.Screen name="wish/[id]" options={{ title: 'Make their day' }} />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      <StatusBar style="dark" />
+    </CelebrationProvider>
   );
 }
