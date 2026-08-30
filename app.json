@@ -10,10 +10,16 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+<<<<<<< HEAD
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "whatsapp"
         ]
+=======
+      "bundleIdentifier": "com.rohan287devsteam.sanly",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+>>>>>>> 2e0f82f (Prepare SANLY development build)
       }
     },
     "android": {
@@ -49,6 +55,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "06b1102e-7154-4b1b-83ff-0ce69772a692"
+      }
     }
   }
 }
