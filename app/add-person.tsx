@@ -45,14 +45,10 @@ export default function AddPersonScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <View style={styles.introCard}>
-            <Text style={styles.introEmoji}>🎈✨</Text>
-            <Text style={styles.kicker}>Who are we celebrating?</Text>
-            <Text style={styles.introBody}>Add someone special now. SANLY will help you remember the moment later.</Text>
-          </View>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
+          <Text style={styles.kicker}>Who are we celebrating? 💜</Text>
 
-          <Text style={styles.label}>What are we celebrating?</Text>
+          <Text style={styles.label}>Occasion</Text>
           <View style={styles.occasionGrid}>
             {occasions.map(({ type, emoji }) => (
               <Pressable key={type} onPress={() => setOccasionType(type)} style={[styles.occasionCard, occasionType === type && styles.occasionActive]}>
@@ -62,12 +58,11 @@ export default function AddPersonScreen() {
             ))}
           </View>
 
-          <Text style={styles.label}>Who is this for?</Text>
-          <TextInput autoFocus value={name} onChangeText={setName} placeholder="Their name" placeholderTextColor="#A89AAA" style={styles.input} />
+          <Text style={styles.label}>Their name</Text>
+          <TextInput autoFocus value={name} onChangeText={setName} placeholder="Name" placeholderTextColor="#A89AAA" style={styles.input} />
 
-          <Text style={styles.label}>Date</Text>
+          <Text style={styles.label}>Day & month</Text>
           <TextInput value={date} onChangeText={(text) => setDate(formatDateInput(text))} placeholder="DD/MM" placeholderTextColor="#A89AAA" style={styles.input} keyboardType="number-pad" maxLength={5} />
-          <Text style={styles.helper}>Just type 0208 — SANLY will format it as 02/08.</Text>
 
           <Text style={styles.label}>They’re my…</Text>
           <View style={styles.chips}>{relationships.map((item) => (
@@ -85,7 +80,7 @@ export default function AddPersonScreen() {
           ))}</View>
 
           <Pressable disabled={!canSave} onPress={save} style={({ pressed }) => [styles.save, !canSave && styles.saveDisabled, pressed && canSave && styles.pressed]}>
-            <Text style={styles.saveText}>Save celebration 🎉</Text>
+            <Text style={styles.saveText}>Save 💜</Text>
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -95,10 +90,10 @@ export default function AddPersonScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 }, safe: { flex: 1, backgroundColor: '#FFF9F5' }, container: { padding: 22, paddingBottom: 36 },
-  introCard: { backgroundColor: '#F5EEFA', borderRadius: 26, padding: 20, marginBottom: 4, borderWidth: 1, borderColor: '#E8DDF0' }, introEmoji: { fontSize: 26, marginBottom: 8 }, kicker: { fontSize: 24, lineHeight: 30, fontWeight: '900', color: '#35143F' }, introBody: { marginTop: 7, color: '#756878', lineHeight: 21 }, label: { fontSize: 15, fontWeight: '900', color: '#35143F', marginBottom: 9, marginTop: 18 },
+  kicker: { fontSize: 26, lineHeight: 34, fontWeight: '900', color: '#35143F', marginBottom: 8 }, label: { fontSize: 15, fontWeight: '900', color: '#35143F', marginBottom: 9, marginTop: 18 },
   occasionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 }, occasionCard: { width: '31%', minHeight: 90, borderRadius: 19, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EDE3F1', alignItems: 'center', justifyContent: 'center', padding: 8 },
   occasionActive: { backgroundColor: '#F5EEFA', borderColor: '#6D28A8' }, occasionEmoji: { fontSize: 26, marginBottom: 6 }, occasionText: { textAlign: 'center', fontSize: 11, fontWeight: '800', color: '#756878' }, occasionTextActive: { color: '#6D28A8' },
-  input: { minHeight: 58, borderRadius: 18, paddingHorizontal: 18, backgroundColor: '#FFFFFF', fontSize: 18, color: '#2B2030', borderWidth: 1, borderColor: '#EDE3F1' }, helper: { marginTop: 7, marginLeft: 3, fontSize: 12, lineHeight: 18, color: '#8D7E90' },
+  input: { minHeight: 58, borderRadius: 18, paddingHorizontal: 18, backgroundColor: '#FFFFFF', fontSize: 18, color: '#2B2030', borderWidth: 1, borderColor: '#EDE3F1' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 }, chip: { paddingHorizontal: 16, paddingVertical: 12, borderRadius: 999, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#EDE3F1' }, chipActive: { backgroundColor: '#F5EEFA', borderColor: '#6D28A8' }, chipText: { fontWeight: '700', color: '#756878' }, chipTextActive: { color: '#6D28A8' },
   languageRow: { flexDirection: 'row', gap: 12 }, languageCard: { flex: 1, minHeight: 94, backgroundColor: '#FFFFFF', borderRadius: 20, borderWidth: 1, borderColor: '#EDE3F1', alignItems: 'center', justifyContent: 'center' }, languageCardActive: { backgroundColor: '#F5EEFA', borderColor: '#6D28A8' }, languageEmoji: { fontSize: 24, fontWeight: '900', color: '#6D28A8', marginBottom: 5 }, languageText: { fontSize: 14, fontWeight: '800', color: '#756878' }, languageTextActive: { color: '#6D28A8' },
   save: { marginTop: 34, minHeight: 58, borderRadius: 18, backgroundColor: '#6D28A8', alignItems: 'center', justifyContent: 'center' }, saveDisabled: { opacity: 0.35 }, saveText: { color: '#FFFFFF', fontSize: 16, fontWeight: '900' }, pressed: { transform: [{ scale: 0.99 }], opacity: 0.85 },
