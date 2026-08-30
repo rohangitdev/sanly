@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { OccasionType, Relationship, useCelebrations, WishLanguage } from '@/src/celebrations-context';
 import { useLanguage } from '@/src/language-context';
-import { scheduleBirthdayReminder } from '@/src/notifications';
+import { syncBirthdayReminders } from '@/src/notifications';
 
 const relationships: Relationship[] = ['Friend', 'Family', 'Partner', 'Colleague'];
 const languages: WishLanguage[] = ['Marathi', 'English'];
@@ -15,10 +15,10 @@ const formatDateInput = (text: string) => { const digits = text.replace(/\D/g, '
 const isValidDate = (value: string) => { if (!/^\d{2}\/\d{2}$/.test(value)) return false; const [day, month] = value.split('/').map(Number); if (month < 1 || month > 12 || day < 1) return false; return day <= new Date(2024, month, 0).getDate(); };
 
 export default function AddPersonScreen() {
-  const { addCelebration } = useCelebrations(); const { language } = useLanguage(); const mr = language === 'Marathi';
+  const { celebrations, addCelebration } = useCelebrations(); const { language } = useLanguage(); const mr = language === 'Marathi';
   const [name, setName] = useState(''); const [occasionType, setOccasionType] = useState<OccasionType>('Birthday'); const [date, setDate] = useState(''); const [relationship, setRelationship] = useState<Relationship>('Friend'); const [wishLanguage, setWishLanguage] = useState<WishLanguage>(mr ? 'Marathi' : 'English'); const [saving, setSaving] = useState(false);
   const canSave = name.trim().length > 1 && isValidDate(date) && !saving;
-  const save = async () => { if (!canSave) return; setSaving(true); const celebration = addCelebration({ name: name.trim(), occasionType, date, relationship, wishLanguage }); try { if (occasionType === 'Birthday') await scheduleBirthdayReminder(celebration, language); } catch (error) { console.warn('SANLY could not schedule birthday reminder', error); } finally { router.replace('/'); } };
+  const save = async () => { if (!canSave) return; setSaving(true); const celebration = addCelebration({ name: name.trim(), occasionType, date, relationship, wishLanguage }); try { if (occasionType === 'Birthday') await syncBirthdayReminders([...celebrations, celebration], language); } catch (error) { console.warn('SANLY could not schedule birthday reminder', error); } finally { router.replace('/'); } };
   const c = mr ? { kicker: 'आज आपण कोणाचा खास दिवस लक्षात ठेवतोय? 💗', occasion: 'प्रसंग', name: 'त्यांचं नाव', namePlaceholder: 'नाव', date: 'दिवस आणि महिना', relation: 'तुमचं नातं', wishLanguage: 'शुभेच्छांची भाषा', save: saving ? 'जतन करत आहोत…' : 'जतन करा 💜', reminder: '🎂 वाढदिवसासाठी SANLY सकाळी ९ वाजता आठवण करून देईल.', Marathi: 'मराठी', English: 'इंग्रजी' } : { kicker: 'Who are we celebrating? 💗', occasion: 'Occasion', name: 'Their name', namePlaceholder: 'Name', date: 'Day & month', relation: 'They’re my…', wishLanguage: 'Wish language', save: saving ? 'Saving…' : 'Save 💜', reminder: '🎂 For birthdays, SANLY will remind you at 9:00 AM.', Marathi: 'Marathi', English: 'English' };
 
   return <SafeAreaView style={styles.safe} edges={['bottom']}><KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}><ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
