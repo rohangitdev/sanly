@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Celebration, useCelebrations } from '@/src/celebrations-context';
@@ -35,6 +36,18 @@ export default function WishScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { celebrations } = useCelebrations();
   const person = celebrations.find((item) => item.id === id);
+  const entrance = useRef(new Animated.Value(0)).current;
+  const balloon = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.spring(entrance, { toValue: 1, useNativeDriver: true, friction: 7, tension: 55 }),
+      Animated.loop(Animated.sequence([
+        Animated.timing(balloon, { toValue: 1, duration: 1700, useNativeDriver: true }),
+        Animated.timing(balloon, { toValue: 0, duration: 1700, useNativeDriver: true }),
+      ])),
+    ]).start();
+  }, [balloon, entrance]);
 
   if (!person) return <SafeAreaView style={styles.safe}><View style={styles.missing}><Text style={styles.title}>We couldn’t find this celebration.</Text><Pressable onPress={() => router.replace('/')}><Text style={styles.link}>Back home</Text></Pressable></View></SafeAreaView>;
 
@@ -46,45 +59,48 @@ export default function WishScreen() {
     if (canOpen) await Linking.openURL(url); else await shareWish(message);
   };
   const customize = (message = '') => router.push({ pathname: '/custom-wish/[id]', params: { id: person.id, draft: message } });
+  const isMarathi = person.wishLanguage === 'Marathi';
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.celebrationHero}>
-          <Text style={[styles.float, styles.leftBalloon]}>🎈</Text><Text style={[styles.float, styles.rightBalloon]}>🎈</Text>
-          <Text style={[styles.float, styles.confettiOne]}>✨</Text><Text style={[styles.float, styles.confettiTwo]}>🎊</Text>
+        <Animated.View style={[styles.celebrationHero, { opacity: entrance, transform: [{ scale: entrance.interpolate({ inputRange: [0, 1], outputRange: [0.94, 1] }) }] }]}> 
+          <Animated.Text style={[styles.float, styles.leftBalloon, { transform: [{ translateY: balloon.interpolate({ inputRange: [0, 1], outputRange: [6, -9] }) }] }]}>🎈</Animated.Text>
+          <Animated.Text style={[styles.float, styles.rightBalloon, { transform: [{ translateY: balloon.interpolate({ inputRange: [0, 1], outputRange: [-5, 10] }) }] }]}>🎈</Animated.Text>
+          <Text style={[styles.float, styles.confettiOne]}>✨</Text><Text style={[styles.float, styles.confettiTwo]}>🎊</Text><Text style={[styles.float, styles.confettiThree]}>💫</Text>
+          <Text style={styles.heroKicker}>आज • {person.occasionType} • {person.date}</Text>
+          <Text style={styles.heroName}>{person.name}</Text>
+          <Text style={styles.heroTitle}>{isMarathi ? 'चा खास दिवस आहे' : 'deserves a little celebration'}</Text>
           <Text style={styles.heroEmoji}>{person.occasionType === 'Birthday' ? '🎂' : '🎉'}</Text>
-          <Text style={styles.heroKicker}>{person.occasionType} • {person.date}</Text>
-          <Text style={styles.heroTitle}>Celebrate {person.name}! 🥳</Text>
-          <Text style={styles.heroSubtitle}>Pick something that feels like you.</Text>
-        </View>
+          <Text style={styles.heroSubtitle}>{isMarathi ? 'चला, त्यांना काहीतरी खास शुभेच्छा देऊया 💜' : 'Let’s make the wish feel personal. 💜'}</Text>
+        </Animated.View>
 
         <View style={styles.personLine}><Text style={styles.personLineText}>{person.relationship} • wishes in {person.wishLanguage}</Text></View>
-        <Text style={styles.sectionTitle}>Choose a wish</Text>
+        <Text style={styles.sectionTitle}>{isMarathi ? 'शुभेच्छा निवडा' : 'Choose a wish'}</Text>
 
         {wishes.map((wish) => (
           <View key={wish.label} style={styles.wishCard}>
             <View style={styles.wishHeader}><Text style={styles.wishLabel}>{wish.label}</Text><Text>💜</Text></View>
             <Text style={styles.wishText}>{wish.text}</Text>
-            <Pressable onPress={() => customize(wish.text)} style={styles.customizeLink}><Ionicons name="pencil-outline" size={16} color="#7650A8" /><Text style={styles.customizeText}>Customize this wish</Text></Pressable>
+            <Pressable onPress={() => customize(wish.text)} style={styles.customizeLink}><Ionicons name="pencil-outline" size={16} color="#6D28A8" /><Text style={styles.customizeText}>{isMarathi ? 'ही शुभेच्छा बदला' : 'Customize this wish'}</Text></Pressable>
             <View style={styles.actions}>
-              <Pressable onPress={() => shareWish(wish.text)} style={styles.secondaryButton}><Ionicons name="share-outline" size={18} color="#7650A8" /><Text style={styles.secondaryText}>Share</Text></Pressable>
+              <Pressable onPress={() => shareWish(wish.text)} style={styles.secondaryButton}><Ionicons name="share-outline" size={18} color="#6D28A8" /><Text style={styles.secondaryText}>{isMarathi ? 'शेअर' : 'Share'}</Text></Pressable>
               <Pressable onPress={() => openWhatsApp(wish.text)} style={styles.whatsappButton}><Ionicons name="logo-whatsapp" size={19} color="#FFFFFF" /><Text style={styles.whatsappText}>WhatsApp</Text></Pressable>
             </View>
           </View>
         ))}
 
-        <Pressable onPress={() => customize('')} style={styles.writeOwn}><Ionicons name="create-outline" size={20} color="#7650A8" /><View><Text style={styles.writeOwnTitle}>Write my own wish</Text><Text style={styles.writeOwnBody}>Start from a blank page and make it personal.</Text></View></Pressable>
+        <Pressable onPress={() => customize('')} style={styles.writeOwn}><Ionicons name="create-outline" size={20} color="#6D28A8" /><View><Text style={styles.writeOwnTitle}>{isMarathi ? 'माझ्या शब्दांत लिहा' : 'Write my own wish'}</Text><Text style={styles.writeOwnBody}>{isMarathi ? 'मनातलं स्वतःच्या शब्दांत लिहा.' : 'Start from a blank page and make it personal.'}</Text></View></Pressable>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FFF9F4' }, container: { padding: 22, paddingBottom: 40 }, missing: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }, link: { color: '#7650A8', fontWeight: '800', marginTop: 16 },
-  celebrationHero: { minHeight: 235, backgroundColor: '#F4EAFE', borderRadius: 30, padding: 24, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }, float: { position: 'absolute', fontSize: 34 }, leftBalloon: { left: 13, top: 48 }, rightBalloon: { right: 14, top: 30 }, confettiOne: { left: 44, bottom: 27, fontSize: 22 }, confettiTwo: { right: 42, bottom: 26, fontSize: 24 }, heroEmoji: { fontSize: 55, marginBottom: 9 }, heroKicker: { color: '#7650A8', fontSize: 12, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 0.8 }, heroTitle: { fontSize: 28, lineHeight: 34, fontWeight: '900', color: '#3F2C53', textAlign: 'center', marginTop: 5 }, heroSubtitle: { color: '#786A85', marginTop: 7 },
-  personLine: { alignItems: 'center', marginTop: 14 }, personLineText: { fontSize: 12, color: '#8A768E' }, sectionTitle: { fontSize: 21, fontWeight: '900', color: '#3F2C53', marginTop: 24, marginBottom: 2 }, title: { fontSize: 24, fontWeight: '900', color: '#492C2A' },
-  wishCard: { backgroundColor: '#FFFFFF', borderRadius: 24, padding: 20, marginTop: 12, borderWidth: 1, borderColor: '#EDE2F4' }, wishHeader: { flexDirection: 'row', justifyContent: 'space-between' }, wishLabel: { fontSize: 14, fontWeight: '900', color: '#7650A8' }, wishText: { fontSize: 17, lineHeight: 28, color: '#45374C', marginTop: 12 }, customizeLink: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 15 }, customizeText: { color: '#7650A8', fontWeight: '800', fontSize: 13 },
-  actions: { flexDirection: 'row', gap: 10, marginTop: 16 }, secondaryButton: { flex: 1, minHeight: 48, borderRadius: 16, backgroundColor: '#F6EFFC', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }, secondaryText: { color: '#7650A8', fontWeight: '800' }, whatsappButton: { flex: 1.25, minHeight: 48, borderRadius: 16, backgroundColor: '#2F7D55', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }, whatsappText: { color: '#FFFFFF', fontWeight: '800' },
-  writeOwn: { marginTop: 16, borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 13, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#BCA4D3', backgroundColor: '#FBF7FF' }, writeOwnTitle: { fontWeight: '900', color: '#5D3D80' }, writeOwnBody: { fontSize: 12, color: '#8A768E', marginTop: 3, maxWidth: 260 },
+  safe: { flex: 1, backgroundColor: '#FFF9F5' }, container: { padding: 22, paddingBottom: 40 }, missing: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }, link: { color: '#6D28A8', fontWeight: '900', marginTop: 16 },
+  celebrationHero: { minHeight: 315, backgroundColor: '#35143F', borderRadius: 32, padding: 26, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }, float: { position: 'absolute', fontSize: 38 }, leftBalloon: { left: 15, top: 48 }, rightBalloon: { right: 16, top: 31 }, confettiOne: { left: 43, bottom: 35, fontSize: 22 }, confettiTwo: { right: 42, bottom: 29, fontSize: 24 }, confettiThree: { right: 46, top: 110, fontSize: 20 }, heroKicker: { color: '#E8D8F4', fontSize: 12, fontWeight: '900', letterSpacing: 0.8 }, heroName: { fontSize: 44, lineHeight: 50, fontWeight: '900', color: '#F4A62A', textAlign: 'center', marginTop: 10 }, heroTitle: { fontSize: 24, lineHeight: 31, fontWeight: '900', color: '#FFFFFF', textAlign: 'center', marginTop: 2 }, heroEmoji: { fontSize: 54, marginTop: 11 }, heroSubtitle: { color: '#F7ECFA', marginTop: 13, textAlign: 'center', fontSize: 14, lineHeight: 21, maxWidth: 270 },
+  personLine: { alignItems: 'center', marginTop: 14 }, personLineText: { fontSize: 12, color: '#756878' }, sectionTitle: { fontSize: 22, fontWeight: '900', color: '#35143F', marginTop: 24, marginBottom: 2 }, title: { fontSize: 24, fontWeight: '900', color: '#35143F' },
+  wishCard: { backgroundColor: '#FFFFFF', borderRadius: 24, padding: 20, marginTop: 12, borderWidth: 1, borderColor: '#EDE2F4' }, wishHeader: { flexDirection: 'row', justifyContent: 'space-between' }, wishLabel: { fontSize: 14, fontWeight: '900', color: '#6D28A8' }, wishText: { fontSize: 17, lineHeight: 28, color: '#2B2030', marginTop: 12 }, customizeLink: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 15 }, customizeText: { color: '#6D28A8', fontWeight: '800', fontSize: 13 },
+  actions: { flexDirection: 'row', gap: 10, marginTop: 16 }, secondaryButton: { flex: 1, minHeight: 48, borderRadius: 16, backgroundColor: '#F5EEFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }, secondaryText: { color: '#6D28A8', fontWeight: '900' }, whatsappButton: { flex: 1.25, minHeight: 48, borderRadius: 16, backgroundColor: '#2F7D55', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }, whatsappText: { color: '#FFFFFF', fontWeight: '900' },
+  writeOwn: { marginTop: 16, borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 13, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#B99ACF', backgroundColor: '#F9F4FC' }, writeOwnTitle: { fontWeight: '900', color: '#5A2379' }, writeOwnBody: { fontSize: 12, color: '#756878', marginTop: 3, maxWidth: 260 },
 });
