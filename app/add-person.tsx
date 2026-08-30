@@ -13,6 +13,20 @@ const occasions: { type: OccasionType; emoji: string }[] = [
   { type: 'Festival', emoji: '🪔' }, { type: 'Achievement', emoji: '🏆' }, { type: 'Other', emoji: '🎁' },
 ];
 
+const formatDateInput = (text: string) => {
+  const digits = text.replace(/\D/g, '').slice(0, 4);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+};
+
+const isValidDate = (value: string) => {
+  if (!/^\d{2}\/\d{2}$/.test(value)) return false;
+  const [day, month] = value.split('/').map(Number);
+  if (month < 1 || month > 12 || day < 1) return false;
+  const daysInMonth = new Date(2024, month, 0).getDate();
+  return day <= daysInMonth;
+};
+
 export default function AddPersonScreen() {
   const { addCelebration } = useCelebrations();
   const [name, setName] = useState('');
@@ -21,7 +35,7 @@ export default function AddPersonScreen() {
   const [relationship, setRelationship] = useState<Relationship>('Friend');
   const [wishLanguage, setWishLanguage] = useState<WishLanguage>('Marathi');
 
-  const canSave = name.trim().length > 1 && /^\d{2}\/\d{2}$/.test(date);
+  const canSave = name.trim().length > 1 && isValidDate(date);
   const save = () => {
     if (!canSave) return;
     addCelebration({ name: name.trim(), occasionType, date, relationship, wishLanguage });
@@ -48,8 +62,8 @@ export default function AddPersonScreen() {
           <TextInput autoFocus value={name} onChangeText={setName} placeholder="Their name" placeholderTextColor="#B8A29D" style={styles.input} />
 
           <Text style={styles.label}>Date</Text>
-          <TextInput value={date} onChangeText={(text) => setDate(text.replace(/[^0-9/]/g, '').slice(0, 5))} placeholder="DD/MM" placeholderTextColor="#B8A29D" style={styles.input} keyboardType="number-pad" maxLength={5} />
-          <Text style={styles.helper}>Use the day and month. Repeating occasions can be automated next.</Text>
+          <TextInput value={date} onChangeText={(text) => setDate(formatDateInput(text))} placeholder="DD/MM" placeholderTextColor="#B8A29D" style={styles.input} keyboardType="number-pad" maxLength={5} />
+          <Text style={styles.helper}>Just type 0208 — SANLY will format it as 02/08.</Text>
 
           <Text style={styles.label}>They’re my…</Text>
           <View style={styles.chips}>{relationships.map((item) => (
