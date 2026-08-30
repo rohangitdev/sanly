@@ -8,20 +8,16 @@
     "scheme": "sanly",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-<<<<<<< HEAD
-      "infoPlist": {
-        "LSApplicationQueriesSchemes": [
-          "whatsapp"
-        ]
-=======
-      "bundleIdentifier": "com.rohan287devsteam.sanly",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
->>>>>>> 2e0f82f (Prepare SANLY development build)
-      }
-    },
+ "ios": {
+  "supportsTablet": true,
+  "bundleIdentifier": "com.rohan287devsteam.sanly",
+  "infoPlist": {
+    "ITSAppUsesNonExemptEncryption": false,
+    "LSApplicationQueriesSchemes": [
+      "whatsapp"
+    ]
+  }
+},
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
