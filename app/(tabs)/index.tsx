@@ -27,16 +27,16 @@ export default function HomeScreen() {
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Coming up</Text>
-          <Pressable onPress={() => router.push('/add-person')} hitSlop={10}><Text style={styles.addLink}>+ Add occasion</Text></Pressable>
+          <Pressable onPress={() => router.push('/add-person')} hitSlop={10}><Text style={styles.addLink}>+ Add someone special</Text></Pressable>
         </View>
 
         {!hydrated ? <Text style={styles.loading}>Remembering your celebrations…</Text> : celebrations.length === 0 ? (
           <View style={styles.emptyCard}>
             <View style={styles.giftCircle}><Text style={styles.gift}>🎁</Text></View>
             <Text style={styles.emptyTitle}>Your celebration circle starts here</Text>
-            <Text style={styles.emptyBody}>Add a person and an occasion. SANLY keeps it privately on this phone.</Text>
+            <Text style={styles.emptyBody}>Add someone special and an occasion. SANLY keeps it privately on this phone.</Text>
             <Pressable onPress={() => router.push('/add-person')} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
-              <Ionicons name="add" size={22} color="#FFFFFF" /><Text style={styles.primaryButtonText}>Add celebration</Text>
+              <Ionicons name="add" size={22} color="#FFFFFF" /><Text style={styles.primaryButtonText}>Add someone special</Text>
             </Pressable>
           </View>
         ) : (
