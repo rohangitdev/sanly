@@ -1,0 +1,22 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+
+export type AppLanguage = 'Marathi' | 'Hindi' | 'English';
+
+type LanguageContextValue = { language: AppLanguage | null; hydrated: boolean; setLanguage: (language: AppLanguage) => Promise<void>; t: (key: keyof typeof copy.English) => string; };
+const STORAGE_KEY = '@sanly/app-language-v1';
+
+const copy = {
+  English: { tagline:'Don’t forget to wish your loved ones.', today:'Today', comingUp:'Coming up', addSomeone:'+ Add someone special', wish:'Wish', noToday:'No special day today — yet ✨', noTodayBody:'We’ll put today’s birthdays and celebrations right here when they arrive.', oneTodayBody:'A thoughtful wish takes seconds — make it count.', manyToday:'people to celebrate today 🎉', specialDay:'special day', specialMoment:'special moment', specialMoments:'special moments', loading:'Remembering your celebrations…', emptyTitle:'Your celebration circle starts here', emptyBody:'Add someone special and an occasion. SANLY keeps it privately on this phone.', allTodayTitle:'Everything saved is happening today!', allTodayBody:'Enjoy the celebrations — you can add another special person anytime.', marathiNote:'Don’t forget to wish your loved ones. 💜', changeLanguage:'Language', chooseLanguage:'Choose your language', chooseLanguageBody:'SANLY will use this language for the app. You can still choose a different language for each wish.' },
+  Marathi: { tagline:'आपल्या माणसांना शुभेच्छा द्यायला विसरू नका.', today:'आज', comingUp:'लवकरच', addSomeone:'+ खास व्यक्ती जोडा', wish:'शुभेच्छा द्या', noToday:'आज कोणताही खास दिवस नाही — अजून तरी ✨', noTodayBody:'आजचा वाढदिवस किंवा खास प्रसंग आला की SANLY तो इथे दाखवेल.', oneTodayBody:'मनापासून शुभेच्छा द्यायला फक्त काही क्षण लागतात.', manyToday:'जणांचा आज खास दिवस आहे 🎉', specialDay:'चा आज खास दिवस आहे', specialMoment:'खास क्षण', specialMoments:'खास क्षण', loading:'तुमचे खास दिवस आठवत आहोत…', emptyTitle:'तुमच्या खास माणसांपासून सुरुवात करा', emptyBody:'एखादी खास व्यक्ती आणि प्रसंग जोडा. SANLY ही माहिती या फोनवरच सुरक्षित ठेवते.', allTodayTitle:'आज सगळ्यांचाच खास दिवस आहे!', allTodayBody:'आजचे क्षण आनंदाने साजरे करा — आणखी एखादी खास व्यक्ती कधीही जोडू शकता.', marathiNote:'आपल्या माणसांना शुभेच्छा द्यायला विसरू नका. 💜', changeLanguage:'भाषा', chooseLanguage:'तुमची भाषा निवडा', chooseLanguageBody:'SANLY चे सर्व पर्याय या भाषेत दिसतील. प्रत्येक शुभेच्छेसाठी वेगळी भाषा निवडता येईल.' },
+  Hindi: { tagline:'अपने प्रियजनों को शुभकामनाएँ देना न भूलें।', today:'आज', comingUp:'जल्द आने वाले', addSomeone:'+ किसी खास व्यक्ति को जोड़ें', wish:'शुभकामना दें', noToday:'आज कोई खास दिन नहीं है — अभी तक ✨', noTodayBody:'जब आज किसी का जन्मदिन या खास मौका होगा, SANLY उसे यहीं दिखाएगा।', oneTodayBody:'दिल से शुभकामना देने में बस कुछ पल लगते हैं।', manyToday:'लोगों का आज खास दिन है 🎉', specialDay:'का आज खास दिन है', specialMoment:'खास पल', specialMoments:'खास पल', loading:'आपके खास दिन याद कर रहे हैं…', emptyTitle:'अपने खास लोगों से शुरुआत करें', emptyBody:'किसी खास व्यक्ति और मौके को जोड़ें। SANLY यह जानकारी इसी फोन पर निजी रखता है।', allTodayTitle:'आज सभी का खास दिन है!', allTodayBody:'आज के पलों का आनंद लें — आप कभी भी किसी और खास व्यक्ति को जोड़ सकते हैं।', marathiNote:'अपने प्रियजनों को शुभकामनाएँ देना न भूलें। 💜', changeLanguage:'भाषा', chooseLanguage:'अपनी भाषा चुनें', chooseLanguageBody:'SANLY ऐप इसी भाषा में दिखाई देगा। हर शुभकामना के लिए आप अलग भाषा चुन सकते हैं।' },
+} as const;
+
+const LanguageContext = createContext<LanguageContextValue | null>(null);
+export function LanguageProvider({ children }: { children: ReactNode }) {
+  const [language,setLanguageState]=useState<AppLanguage|null>(null); const [hydrated,setHydrated]=useState(false);
+  useEffect(()=>{ AsyncStorage.getItem(STORAGE_KEY).then((value)=>{ if(value==='Marathi'||value==='Hindi'||value==='English') setLanguageState(value); }).finally(()=>setHydrated(true)); },[]);
+  const value=useMemo<LanguageContextValue>(()=>({ language, hydrated, setLanguage:async(next)=>{setLanguageState(next);await AsyncStorage.setItem(STORAGE_KEY,next);}, t:(key)=>copy[language??'English'][key] }),[language,hydrated]);
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+}
+export function useLanguage(){ const context=useContext(LanguageContext); if(!context) throw new Error('useLanguage must be used inside LanguageProvider'); return context; }

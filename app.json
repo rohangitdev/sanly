@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sanly",
+    "name": "SANLY",
     "slug": "sanly",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,9 +9,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.rohan287devsteam.sanly",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [
+          "whatsapp"
+        ]
+      }
     },
     "android": {
+      "package": "com.rohan287devsteam.sanly",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -27,15 +35,16 @@
     },
     "plugins": [
       "expo-router",
+      "expo-notifications",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/icon.png",
+          "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#FFF9F5",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#FFF9F5"
           }
         }
       ]
@@ -43,6 +52,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "06b1102e-7154-4b1b-83ff-0ce69772a692"
+      }
     }
   }
 }
