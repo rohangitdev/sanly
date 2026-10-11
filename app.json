@@ -2,7 +2,7 @@
   "expo": {
     "name": "SANLY",
     "slug": "sanly",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sanly",
@@ -45,6 +45,15 @@
           "backgroundColor": "#FFF9F5",
           "dark": {
             "backgroundColor": "#FFF9F5"
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
           }
         }
       ]
