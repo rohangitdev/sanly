@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 export type Relationship = 'Friend' | 'Family' | 'Partner' | 'Colleague';
-import type { WishLanguage } from './sanly-wish-languages';
 export type { WishLanguage } from './sanly-wish-languages';
 export type OccasionType = 'Birthday' | 'Anniversary' | 'Engagement' | 'Wedding' | 'Graduation' | 'New Job' | 'Festival' | 'Achievement' | 'Other';
 export type Celebration = { id:string; name:string; occasionType:OccasionType; date:string; relationship:Relationship; wishLanguage:WishLanguage; };
