@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
-export const APP_LANGUAGES = ['English','Marathi','Hindi','Gujarati','Telugu','Tamil','Kannada','Bengali','Punjabi','Bhojpuri','German','French','Japanese'] as const;
+export const APP_LANGUAGES = ['English','Marathi','Hindi'] as const;
 export type AppLanguage = typeof APP_LANGUAGES[number];
 
 type LanguageContextValue = { language: AppLanguage | null; hydrated: boolean; setLanguage: (language: AppLanguage) => Promise<void>; t: (key: keyof typeof copy.English) => string; };
@@ -16,7 +16,7 @@ const copy = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language,setLanguageState]=useState<AppLanguage|null>(null); const [hydrated,setHydrated]=useState(false);
-  useEffect(()=>{ AsyncStorage.getItem(STORAGE_KEY).then((value)=>{ if(APP_LANGUAGES.includes(value as AppLanguage)) setLanguageState(value as AppLanguage); }).finally(()=>setHydrated(true)); },[]);
+  useEffect(()=>{ AsyncStorage.getItem(STORAGE_KEY).then((value)=>{ if(APP_LANGUAGES.includes(value as AppLanguage)) setLanguageState(value as AppLanguage); else if(value) setLanguageState('English'); }).finally(()=>setHydrated(true)); },[]);
   const value=useMemo<LanguageContextValue>(()=>({ language, hydrated, setLanguage:async(next)=>{setLanguageState(next);await AsyncStorage.setItem(STORAGE_KEY,next);}, t:(key)=>copy[language==='Marathi'||language==='Hindi'?language:'English'][key] }),[language,hydrated]);
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
