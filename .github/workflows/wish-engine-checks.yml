@@ -22,3 +22,5 @@ jobs:
         run: npx tsc --noEmit
       - name: ESLint
         run: npm run lint
+      - name: Wish rotation behaviour tests
+        run: node --experimental-strip-types --test tests/wish-rotation.test.mjs
