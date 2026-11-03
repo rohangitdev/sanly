@@ -27,6 +27,19 @@ const catalogue: Catalogue = {
       n => `Here's to sunshine, laughter and a brilliant year ahead, ${n}. Happy birthday! ☀️`,
       n => `Happy birthday, ${n}! Wishing you simple joys and a hundred little reasons to smile today. 🎉`,
     ],
+    'Short & Sweet': [
+      n => `Happy birthday, ${n}! Keep shining. ✨`,
+      n => `Big smiles and birthday hugs, ${n}! 🎂`,
+      n => `Here's to your happiest year yet, ${n}! 💛`,
+      n => `Have the loveliest birthday, ${n}! 🎉`,
+    ],
+    Playful: [
+      n => `Hey ${n}, today's agenda: cake, laughter, repeat! 🎂🥳`,
+      n => `Birthday alert! ${n} is officially the star of the day. 🌟`,
+      n => `Make a wish, ${n} — and save me a slice of cake! 🎈`,
+      n => `Confetti for ${n}! May the fun last longer than the candles. 🎊`,
+    ],
+
   },
   Marathi: {
     Heartfelt: [
@@ -47,6 +60,19 @@ const catalogue: Catalogue = {
       n => `${n}, आज मनसोक्त हस, आवडता केक खा आणि सुंदर आठवणी जमव! वाढदिवसाच्या शुभेच्छा! 🎂`,
       n => `वाढदिवसाच्या शुभेच्छा, ${n}! प्रत्येक नव्या सकाळीसोबत काहीतरी छान घडो. ☀️`,
     ],
+    'Short & Sweet': [
+      n => `${n}, वाढदिवसाच्या मनःपूर्वक शुभेच्छा! ❤️`,
+      n => `खूप हस, खूप आनंदी राहा, ${n}! 🎂`,
+      n => `${n}, तुझं येणारं वर्ष सुंदर जावो! ✨`,
+      n => `वाढदिवसाच्या खूप शुभेच्छा, ${n}! 🌸`,
+    ],
+    Playful: [
+      n => `${n}, आज केक, गप्पा आणि धमाल यांचीच पार्टी! 🥳`,
+      n => `अरे वा, ${n} चा वाढदिवस! आज सगळं लक्ष तुझ्यावरच! 🎉`,
+      n => `${n}, इच्छा मागायला विसरू नकोस... आणि केक द्यायलाही! 🎂`,
+      n => `आजचा नियम एकच, ${n}: भरपूर हसायचं आणि मजा करायची! 🎈`,
+    ],
+
   },
   Hindi: {
     Heartfelt: [
@@ -67,6 +93,19 @@ const catalogue: Catalogue = {
       n => `आज खूब मुस्कुराओ, मनपसंद केक खाओ और यादगार पल बनाओ, ${n}! 🎂`,
       n => `जन्मदिन की शुभकामनाएँ, ${n}! हर नई सुबह कोई नई खुशी लेकर आए। ☀️`,
     ],
+    'Short & Sweet': [
+      n => `जन्मदिन मुबारक, ${n}! खुश रहो, मुस्कुराते रहो। ❤️`,
+      n => `${n}, तुम्हारा दिन बहुत प्यारा गुज़रे! 🎂`,
+      n => `ढेर सारी खुशियाँ तुम्हारे नाम, ${n}! ✨`,
+      n => `${n}, जन्मदिन की बहुत-बहुत शुभकामनाएँ! 🌸`,
+    ],
+    Playful: [
+      n => `${n}, आज का प्लान: केक, हँसी और ढेर सारी मस्ती! 🥳`,
+      n => `आज के सुपरस्टार हो तुम, ${n}! पार्टी शुरू करो! 🎉`,
+      n => `${n}, विश माँगो और केक का एक टुकड़ा मेरे लिए भी रखना! 🎂`,
+      n => `जन्मदिन का नियम, ${n}: आज बस खुश रहना है! 🎈`,
+    ],
+
   },
 };
 
