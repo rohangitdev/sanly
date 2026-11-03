@@ -34,7 +34,7 @@ export async function readCachedWishCatalogue(): Promise<WishCandidate[]> {
  */
 export async function refreshWishCatalogue(endpoint: string): Promise<WishCandidate[]> {
   const cached = await readCachedWishCatalogue();
-  if (!endpoint.startsWith('https://')) return cached;
+  if (!/^https:\/\/[^\s/?#]+(?:[/?#]|$)/i.test(endpoint)) return cached;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 7000);
   try {
@@ -45,6 +45,8 @@ export async function refreshWishCatalogue(endpoint: string): Promise<WishCandid
     const parsed: unknown = JSON.parse(body);
     const items = validateWishCatalogue(parsed);
     if (!items.length || items.length > 3000) return cached;
+    // Duplicate IDs would make rotation history ambiguous across remote updates.
+    if (new Set(items.map(item => item.id)).size !== items.length) return cached;
     const record: StoredCatalogue = { version: 1, savedAt: Date.now(), items };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(record));
     return items;
