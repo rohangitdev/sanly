@@ -12,11 +12,13 @@ export function normalizeWishText(text: string): string {
 
 export function uniqueWishes(candidates: readonly WishCandidate[]): WishCandidate[] {
   const seen = new Set<string>();
+  const seenIds = new Set<string>();
   return candidates.filter(candidate => {
     if (!candidate.id || !candidate.text.trim()) return false;
     const key = candidate.language + '|' + candidate.occasion + '|' + normalizeWishText(candidate.text);
-    if (seen.has(key)) return false;
+    if (seen.has(key) || seenIds.has(candidate.id)) return false;
     seen.add(key);
+    seenIds.add(candidate.id);
     return true;
   });
 }
