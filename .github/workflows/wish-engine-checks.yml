@@ -1,0 +1,24 @@
+name: SANLY Wish Engine Checks
+on:
+  push:
+    branches:
+      - feat/dynamic-wish-engine-v1
+  pull_request:
+    paths:
+      - 'src/sanly-wish-*.ts'
+      - 'app/wish/**'
+      - '.github/workflows/wish-engine-checks.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript
+        run: npx tsc --noEmit
+      - name: ESLint
+        run: npm run lint
